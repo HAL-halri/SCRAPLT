@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8edf0417ca04844989a871bec640bbd, type: 3}
+  m_Name: Stage1
+  m_EditorClassIdentifier: 
+  stage: 1
+  storage: 8
+  fuelDuration: 48
+  unlockedFeatures: []
+  dropRates:
+  - stage: 1
+    item: {fileID: 11400000, guid: a72d34bf996abc349a84f84d08ffecac, type: 2}
+    probability: 40
+  - stage: 1
+    item: {fileID: 11400000, guid: e65c367e806c9bf41b337e0da171c73c, type: 2}
+    probability: 40
+  - stage: 1
+    item: {fileID: 11400000, guid: 400b07241f4f4d44ba04f17c5467fef0, type: 2}
+    probability: 15
+  - stage: 1
+    item: {fileID: 11400000, guid: ae03eeb6e74f2f34d9351ead4297d5a9, type: 2}
+    probability: 5
