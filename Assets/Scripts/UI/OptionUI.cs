@@ -10,6 +10,7 @@ public class OptionUI : MonoBehaviour
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private Button saveButton;
     [SerializeField] private GameObject resetConfirmPanel;
+    [SerializeField] private GameObject optionPanel;
 
     void OnEnable()
     {
@@ -21,5 +22,10 @@ public class OptionUI : MonoBehaviour
     {
         //buttonが押されたらGMのSetShipNameを呼び出し&入力された名前に変更を実行
         saveButton.onClick.AddListener(() => GameManager.Instance.SetShipName(nameInputField.text));
+    }
+
+    public void ToggleOptionPanel()
+    {
+        optionPanel.SetActive(!optionPanel.activeSelf);
     }
 }

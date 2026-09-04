@@ -23,7 +23,15 @@ public class CollectionSystem : MonoBehaviour
             return;
         }
 
-        float storageLimitSeconds = GameManager.Instance.GetCurrentStorageMinutes() * 60f; //秒単位に変換
+        GameManager.Instance.AddVoyageTime(Time.deltaTime / 60f * speedMultiplier);
+
+        if (GameManager.Instance.GetFuelRemainingMinutes() <= 0f)
+        {
+            // 収集処理をスキップ
+            return;
+        }
+
+            float storageLimitSeconds = GameManager.Instance.GetCurrentStorageMinutes() * 60f; //秒単位に変換
         if(totalVoyageTime >= storageLimitSeconds)
         {
             //満タンならやめる

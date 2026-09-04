@@ -20,15 +20,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int efficiencyLevel = 0;
     [SerializeField] private List<ShipStageData> allStages;
     [SerializeField] private int currentStage = 1;
+    [SerializeField] private float totalVoyageTime;
     [SerializeField] private long gold = 0;
     [SerializeField] Dictionary<string, long> itemCounts = new Dictionary<string, long>();
     [SerializeField] private string shipName = "ゴーゴー";
     [SerializeField] private bool notificationEnabled = true;
 
-    public long Gold => gold;
-    public int CurrentStage => currentStage;
-    public string ShipName => shipName;
     public int EfficiencyLevel => efficiencyLevel;
+    public int CurrentStage => currentStage;
+    public long Gold => gold;
+    public string ShipName => shipName;
     public bool NotificationEnabled => notificationEnabled;
     public int Rank => storageLevel + fuelLevel + efficiencyLevel;
 
@@ -51,11 +52,38 @@ public class GameManager : MonoBehaviour
         return allStages.Find(s => s.Stage == currentStage);
     }
 
+    public float TotalVoyageTime
+    {
+        get => totalVoyageTime;
+        private set{
+            totalVoyageTime = value;
+            OnFuelChanged?.Invoke();
+        }
+    }
+
+    public event Action OnFuelChanged;
+
+    public void AddVoyageTime(float minutes)
+    {
+        TotalVoyageTime += minutes;
+    }
+
+    public void ResetVoyageTime()
+    {
+        TotalVoyageTime = 0f;
+    }
+
+    public float GetFuelRemainingMinutes()
+    {
+        float remaining = GetCurrentFuelMinutes() - totalVoyageTime;
+        return Mathf.Max(0f, remaining);
+    }
+
     public void AddGold(long amount)
     {
-        gold += amount;
-        //?:nullでなければ変更を知らせる
-        OnGoldChanged?.Invoke();
+            gold += amount;
+            //?:nullでなければ変更を知らせる
+            OnGoldChanged?.Invoke();
     }
 
     public void AddItem(string itemId, long amount)
