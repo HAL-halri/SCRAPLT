@@ -37,12 +37,6 @@ public class HeaderUI : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        fuelText.text = $"Fuel: {GameManager.Instance.GetCurrentFuelMinutes():F0}•ª";
-    }
-
     void UpdateGoldText()
     {
         goldText.text = $"Gold: {GameManager.Instance.Gold}";
@@ -60,8 +54,6 @@ public class HeaderUI : MonoBehaviour
 
     void UpdateFuelText()
     {
-        int remaining = Mathf.FloorToInt(GameManager.Instance.GetFuelRemainingMinutes());
-        int max = Mathf.FloorToInt(GameManager.Instance.GetCurrentFuelMinutes());
-        fuelText.text = $"Fuel:{remaining}/{max}";
+        fuelText.text = $"Fuel:{Mathf.FloorToInt(GameManager.Instance.RemainingFuelLiters)}/180L";
     }
 }

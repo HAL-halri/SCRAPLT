@@ -2773,8 +2773,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5389,13 +5389,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   storageLevel: 0
   fuelLevel: 0
-  efficiencyLevel: 0
+  speedLevel: 0
+  bonusLevel: 0
   allStages:
   - {fileID: 11400000, guid: c97e728331d4fd248906e3a1c28ada7e, type: 2}
   - {fileID: 11400000, guid: 4777ef0d3b381f34ba0c1e5fedca3694, type: 2}
   - {fileID: 11400000, guid: d0c1dec665096a14ea0d9ec57dc9308c, type: 2}
   currentStage: 1
-  totalVoyageTime: 0
+  remainingFuelLiters: 180
   gold: 0
   shipName: "\u30B4\u30FC\u30B4\u30FC"
   notificationEnabled: 1
@@ -5970,6 +5971,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2067327996}
   m_CullTransparentMesh: 1
+--- !u!1 &2114812841
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2114812843}
+  - component: {fileID: 2114812842}
+  m_Layer: 0
+  m_Name: BonusGoldSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2114812842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114812841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 653a7ca50a39be041906bb9ab35bffe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  intervalSeconds: 15
+--- !u!4 &2114812843
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114812841}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 606.2563, y: 1112.6268, z: -3.2670016}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2124163358
 GameObject:
   m_ObjectHideFlags: 0
@@ -6113,3 +6159,4 @@ SceneRoots:
   - {fileID: 679981827}
   - {fileID: 836311317}
   - {fileID: 882987862}
+  - {fileID: 2114812843}

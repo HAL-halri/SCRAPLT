@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CollectionSystem : MonoBehaviour
 {
-    [SerializeField] private float intervalSeconds = 30f; // 5分 = 300秒
+    [SerializeField] private float intervalSeconds = 30f;　//デバッグ用　最終的には60f
     [SerializeField] private float speedMultiplier = 1f; //時間加速倍率
 
 
     private float elapsedSinceLastDraw = 0f;
-    private float totalVoyageTime = 0f;
+    private float elapsedStorageTime = 0f;
 
 
     private void Update()
@@ -23,16 +23,16 @@ public class CollectionSystem : MonoBehaviour
             return;
         }
 
-        GameManager.Instance.AddVoyageTime(Time.deltaTime / 60f * speedMultiplier);
+        GameManager.Instance.ConsumeFuel(Time.deltaTime / 3600f);
 
-        if (GameManager.Instance.GetFuelRemainingMinutes() <= 0f)
+        if (GameManager.Instance.RemainingFuelLiters <= 0f)
         {
             // 収集処理をスキップ
             return;
         }
 
-            float storageLimitSeconds = GameManager.Instance.GetCurrentStorageMinutes() * 60f; //秒単位に変換
-        if(totalVoyageTime >= storageLimitSeconds)
+        float storageLimitSeconds = GameManager.Instance.GetCurrentStorageMinutes() * 60f; //秒単位に変換
+        if(elapsedStorageTime >= storageLimitSeconds)
         {
             //満タンならやめる
             return;
@@ -43,7 +43,7 @@ public class CollectionSystem : MonoBehaviour
         //経過時間
         elapsedSinceLastDraw += scaledDelta;
         //合計時間
-        totalVoyageTime += scaledDelta;
+        elapsedStorageTime += scaledDelta;
 
         //効率アップ効果を受けての実際の待ち時間
         float actualInterval = intervalSeconds * (1 - GameManager.Instance.GetIntervalReductionPercent() / 100f);

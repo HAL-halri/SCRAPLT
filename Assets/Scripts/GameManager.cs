@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+public enum UpgradeType { Storage, Fuel, Speed, Bonus }
+
 public class GameManager : MonoBehaviour
 {
     //外部からアクセス可能かつ編集不可にしている
@@ -17,21 +19,35 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private int storageLevel = 0;
     [SerializeField] private int fuelLevel = 0;
-    [SerializeField] private int efficiencyLevel = 0;
+    [SerializeField] private int speedLevel = 0;
+    [SerializeField] private int bonusLevel = 0;
+
     [SerializeField] private List<ShipStageData> allStages;
     [SerializeField] private int currentStage = 1;
-    [SerializeField] private float totalVoyageTime;
+    [SerializeField] private float remainingFuelLiters = 180f;
     [SerializeField] private long gold = 0;
     [SerializeField] Dictionary<string, long> itemCounts = new Dictionary<string, long>();
     [SerializeField] private string shipName = "ゴーゴー";
     [SerializeField] private bool notificationEnabled = true;
 
-    public int EfficiencyLevel => efficiencyLevel;
+    public int SpeedLevel => speedLevel;
+    public int BonusLevel => bonusLevel;
+
     public int CurrentStage => currentStage;
     public long Gold => gold;
     public string ShipName => shipName;
     public bool NotificationEnabled => notificationEnabled;
-    public int Rank => storageLevel + fuelLevel + efficiencyLevel;
+    public int Rank => storageLevel + fuelLevel + speedLevel+ bonusLevel;
+
+    public float RemainingFuelLiters
+    {
+        get => remainingFuelLiters;
+        private set
+        {
+            remainingFuelLiters = value;
+            OnFuelChanged?.Invoke();
+        }
+    }
 
     public void Awake()
     {
@@ -52,33 +68,35 @@ public class GameManager : MonoBehaviour
         return allStages.Find(s => s.Stage == currentStage);
     }
 
-    public float TotalVoyageTime
-    {
-        get => totalVoyageTime;
-        private set{
-            totalVoyageTime = value;
-            OnFuelChanged?.Invoke();
-        }
-    }
+ 
 
     public event Action OnFuelChanged;
 
-    public void AddVoyageTime(float minutes)
+    public void ConsumeFuel(float hours)
     {
-        TotalVoyageTime += minutes;
+        RemainingFuelLiters = Mathf.Max(0f, RemainingFuelLiters - GetCurrentFuelConsumptionRate() * hours);
     }
 
-    public void ResetVoyageTime()
-    {
-        TotalVoyageTime = 0f;
+    //燃費計算
+    public float GetCurrentFuelConsumptionRate()
+    {   //最大で18時間持つように設計
+        float duration = 4f + 14f * fuelLevel / 30f;
+        return 180f / duration;
     }
 
-    public float GetFuelRemainingMinutes()
+    //Upgradeでの時間比較用
+    public float GetFuelDurationHoursAtLevel(int level)
     {
-        float remaining = GetCurrentFuelMinutes() - totalVoyageTime;
-        return Mathf.Max(0f, remaining);
+        int clamped = Mathf.Clamp(level, 0, 30);
+            return 4f + 14f * clamped / 30f;
     }
 
+    public void RefuelFull()
+    {
+        RemainingFuelLiters = 180f;
+    }
+
+    
     public void AddGold(long amount)
     {
             gold += amount;
@@ -118,45 +136,111 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public float GetCurrentFuelMinutes()
-    {
-        ShipStageData currentData = GetCurrentStageData();
+    //public float GetCurrentFuelMinutes()
+    //{
+    //    ShipStageData currentData = GetCurrentStageData();
 
-        //Stage内レベルを取得 1レベルごとに20分ずつ増加
-        int relativeLevel = fuelLevel - (currentStage - 1) * 10;
+    //    //Stage内レベルを取得 1レベルごとに20分ずつ増加
+    //    int relativeLevel = fuelLevel - (currentStage - 1) * 10;
 
-        if (relativeLevel >= 10)
-        {
-            ShipStageData nextData = allStages.Find(s => s.Stage == currentStage + 1);
-            if (nextData == null)
-            {
-                //Stage上限用
-                return currentData.FuelDuration * 60f + 9 * 20f;
-            }
-            return nextData.FuelDuration * 60f;
-        }
-        else
-        {
-            return currentData.FuelDuration * 60f + relativeLevel * 20f;
-        }
-    }
+    //    if (relativeLevel >= 10)
+    //    {
+    //        ShipStageData nextData = allStages.Find(s => s.Stage == currentStage + 1);
+    //        if (nextData == null)
+    //        {
+    //            //Stage上限用
+    //            return currentData.FuelDuration * 60f + 9 * 20f;
+    //        }
+    //        return nextData.FuelDuration * 60f;
+    //    }
+    //    else
+    //    {
+    //        return currentData.FuelDuration * 60f + relativeLevel * 20f;
+    //    }
+    //}
 
     public float GetIntervalReductionPercent()
     {
-        //1レベルごとに3%ずつ短縮　最大30%
-        return Mathf.Min(efficiencyLevel, 10) * 3f;
+        //1Lvあたり2.22%短縮、時間比較はGetIntervalSecondsAtLevel関数にて行う
+        int clampedSpeedLevel = Mathf.Clamp(speedLevel, 0, 30);
+        return clampedSpeedLevel / 30f * 66.7f;
+    }
+
+    //speedLevel間での秒数比較用
+    public float GetIntervalSecondsAtLevel(int level)
+    {
+        float percent = Mathf.Clamp(level, 0, 30) / 30f * 66.7f;
+        return 60f * (1f - percent / 100);
+    }
+
+    public (int min, int max) GetBonusGoldRange()
+    {
+        int relativeLevel = Math.Clamp(bonusLevel, 0, 10);
+        int max = 10 + relativeLevel * 4;
+        return (1, max);
     }
 
     public float GetNormalBonusPercent()
     {
-        //1レベルごとに1%ずつ上昇　10レベル以降から効果発揮
-        return Mathf.Min(Mathf.Max(0, efficiencyLevel - 10) * 1f , 40f);
+        int relativeLevel = Mathf.Clamp(bonusLevel - 10, 0, 10);
+        return relativeLevel * 3f;
     }
 
     public float GetBigBonusPercent()
     {
-        //10レベルごとに1%ずつ上昇　20レベル以降から効果発揮
-        return Mathf.Min(Mathf.Floor(Mathf.Max(0, efficiencyLevel - 10) / 10f) * 1f , 10f);
+        int relativeLevel = Mathf.Clamp(bonusLevel - 20, 0, 10);
+        return relativeLevel * 1f;
+    }
+
+    public bool CanUpgrade(UpgradeType type)
+    {
+        int currentLevel;
+
+        switch (type)
+        {
+            case UpgradeType.Storage:
+                currentLevel = storageLevel;
+                break;
+            case UpgradeType.Fuel:
+                currentLevel = fuelLevel;
+                break;
+            case UpgradeType.Speed:
+                currentLevel = speedLevel;
+                break;
+            case UpgradeType.Bonus:
+                currentLevel = bonusLevel;
+                break;
+            default:
+                return false;
+        }
+
+        return currentLevel < currentStage * 10;
+    }
+
+    public bool CanAdvanceStage()
+    {
+        //各レベル10より大きければstage上昇可能
+        if (storageLevel >= currentStage * 10 && fuelLevel >= currentStage * 10 && speedLevel >= currentStage * 10 && bonusLevel >= currentStage * 10)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool AdvanceStage()
+    {
+        if(CanAdvanceStage())
+        {
+            currentStage += 1;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void SetShipName(string newName)
@@ -175,7 +259,8 @@ public class GameManager : MonoBehaviour
         gold = 0;
         storageLevel = 0;
         fuelLevel = 0;
-        efficiencyLevel = 0;
+        speedLevel = 0;
+        bonusLevel = 0;
         currentStage = 1;
         shipName = "ゴーゴー";
         itemCounts.Clear();
