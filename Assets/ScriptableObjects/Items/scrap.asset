@@ -15,3 +15,6 @@ MonoBehaviour:
   itemId: scrap
   displayName: "\u30B9\u30AF\u30E9\u30C3\u30D7"
   icon: {fileID: 0}
+  canSell: 1
+  value: 500
+  defaultKeepCount: 10

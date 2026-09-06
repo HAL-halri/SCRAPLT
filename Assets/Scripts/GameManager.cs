@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float remainingFuelLiters = 180f;
     [SerializeField] private long gold = 0;
     [SerializeField] Dictionary<string, long> itemCounts = new Dictionary<string, long>();
+    [SerializeField] Dictionary<string, long> reservedCounts = new Dictionary<string, long>();
     [SerializeField] private string shipName = "ゴーゴー";
     [SerializeField] private bool notificationEnabled = true;
 
@@ -91,11 +92,11 @@ public class GameManager : MonoBehaviour
             return 4f + 14f * clamped / 30f;
     }
 
+    //データ増加
     public void RefuelFull()
     {
         RemainingFuelLiters = 180f;
     }
-
     
     public void AddGold(long amount)
     {
@@ -104,15 +105,20 @@ public class GameManager : MonoBehaviour
             OnGoldChanged?.Invoke();
     }
 
-    public void AddItem(string itemId, long amount)
+    public void AddItem(ItemData item, long amount)
     {
-        if (!itemCounts.ContainsKey(itemId))
+        if (!itemCounts.ContainsKey(item.ItemId))
         {
-            itemCounts[itemId] = 0;
+            itemCounts[item.ItemId] = 0;
         }
-        itemCounts[itemId] += amount;
+        if (!reservedCounts.ContainsKey(item.ItemId))
+        {
+            reservedCounts[item.ItemId] = item.DefaultKeepCount;
+        }
+        itemCounts[item.ItemId] += amount;
     }
 
+    //データ取得関連
     public float GetCurrentStorageMinutes()
     {
         ShipStageData currentData = GetCurrentStageData();
@@ -175,9 +181,13 @@ public class GameManager : MonoBehaviour
 
     public (int min, int max) GetBonusGoldRange()
     {
-        int relativeLevel = Math.Clamp(bonusLevel, 0, 10);
-        int max = 10 + relativeLevel * 4;
-        return (1, max);
+        int clampedLevel = Mathf.Clamp(bonusLevel, 0, 30);
+        float ratio = Mathf.Sqrt((float)clampedLevel / 30f);
+        //最小値10-40　序盤に強化恩恵を感じられるような式に
+        int min = Mathf.RoundToInt(10f + 30f * ratio);
+        //最大値20-100
+        int max = Mathf.RoundToInt(20f + 80f * ratio);
+        return (min, max);
     }
 
     public float GetNormalBonusPercent()
@@ -192,6 +202,7 @@ public class GameManager : MonoBehaviour
         return relativeLevel * 1f;
     }
 
+    //Upgrade処理
     public bool CanUpgrade(UpgradeType type)
     {
         int currentLevel;
@@ -241,6 +252,62 @@ public class GameManager : MonoBehaviour
         {
             return false;
         }
+    }
+
+
+    //item売却処理
+    public bool SellItem(ItemData item)
+    {
+        if (!item.CanSell)
+        {
+            return false;
+        }
+        if (!itemCounts.ContainsKey(item.ItemId))
+        {
+            return false;
+        }
+        //見つからなかったらkeepが自動的に0になる
+        reservedCounts.TryGetValue(item.ItemId, out long keep);
+
+        long canSellCounts = Math.Max(0, itemCounts[item.ItemId] - keep);
+        if(canSellCounts <= 0)
+        {
+            return false;
+        }
+
+        AddGold(canSellCounts * item.Value);
+        itemCounts[item.ItemId] -= canSellCounts;
+        return true;
+    }
+
+    public void SellALLItems(List<ItemData> allItems)
+    {
+        foreach(ItemData item in allItems)
+        {
+            SellItem(item);
+        }
+    }
+
+    //test
+    [SerializeField] private ItemData testItem;
+
+    [ContextMenu("Test Sell")]
+    public void TestSell()
+    {
+        bool success = SellItem(testItem);
+        if (success)
+        {
+            Debug.Log($"売却成功：現在Gold {Gold}");
+        }
+        else
+        {
+            Debug.Log("売却できませんでした（売却不可、未所持、またはキープ数超過）");
+        }
+    }
+
+    public void SetKeppCounts(string itemId, long count)
+    {
+        reservedCounts[itemId] = Math.Max(0L, count);
     }
 
     public void SetShipName(string newName)

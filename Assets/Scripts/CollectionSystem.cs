@@ -71,7 +71,6 @@ public class CollectionSystem : MonoBehaviour
             cumulative += drop.probability;
             if (roll <= cumulative)
             {
-                GameManager.Instance.AddGold(10);
 
                 if (Random.Range(0f, 100f) <= GameManager.Instance.GetNormalBonusPercent())
                 {
@@ -81,8 +80,8 @@ public class CollectionSystem : MonoBehaviour
                 {
                     totalCount *= 5;
                 }
-                GameManager.Instance.AddItem(drop.item.ItemId, totalCount);
-                Debug.Log($"Drew: {drop.item.ItemId} * {totalCount} (roll={roll:F1}, cumulative={cumulative})");
+                GameManager.Instance.AddItem(drop.item, totalCount);
+                Debug.Log($"Drew: {drop.item} * {totalCount} (roll={roll:F1}, cumulative={cumulative})");
                 return;
             }
         }

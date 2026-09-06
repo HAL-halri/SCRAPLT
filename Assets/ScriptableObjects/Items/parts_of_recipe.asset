@@ -15,3 +15,6 @@ MonoBehaviour:
   itemId: parts_of_recipe
   displayName: "\u30EC\u30B7\u30D4\u306E\u30AB\u30B1\u30E9"
   icon: {fileID: 0}
+  canSell: 0
+  value: 0
+  defaultKeepCount: 10

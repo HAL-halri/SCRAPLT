@@ -15,3 +15,6 @@ MonoBehaviour:
   itemId: plastic
   displayName: "\u30D7\u30E9\u306E\u30AB\u30B1\u30E9"
   icon: {fileID: 0}
+  canSell: 1
+  value: 100
+  defaultKeepCount: 10

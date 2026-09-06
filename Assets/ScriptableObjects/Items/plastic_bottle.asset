@@ -13,5 +13,8 @@ MonoBehaviour:
   m_Name: plastic_bottle
   m_EditorClassIdentifier: 
   itemId: plastic_bottle
-  displayName: "\u30D7\u30E9\u5BB9\u5668"
+  displayName: "\u30DA\u30C3\u30C8\u30DC\u30C8\u30EB"
   icon: {fileID: 0}
+  canSell: 1
+  value: 150
+  defaultKeepCount: 10

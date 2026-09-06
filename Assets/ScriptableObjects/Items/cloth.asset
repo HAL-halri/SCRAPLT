@@ -15,3 +15,6 @@ MonoBehaviour:
   itemId: cloth
   displayName: "\u5E03"
   icon: {fileID: 0}
+  canSell: 1
+  value: 200
+  defaultKeepCount: 10

@@ -1906,7 +1906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfe19616c6c15e84b867a383d5f4cad9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intervalSeconds: 10
+  intervalSeconds: 2
   speedMultiplier: 1
 --- !u!4 &679981827
 Transform:
@@ -5400,6 +5400,7 @@ MonoBehaviour:
   gold: 0
   shipName: "\u30B4\u30FC\u30B4\u30FC"
   notificationEnabled: 1
+  testItem: {fileID: 11400000, guid: e65c367e806c9bf41b337e0da171c73c, type: 2}
 --- !u!4 &1762131804
 Transform:
   m_ObjectHideFlags: 0

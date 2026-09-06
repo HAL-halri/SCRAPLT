@@ -15,3 +15,6 @@ MonoBehaviour:
   itemId: bottle
   displayName: "\u74F6"
   icon: {fileID: 0}
+  canSell: 1
+  value: 250
+  defaultKeepCount: 10

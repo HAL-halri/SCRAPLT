@@ -15,3 +15,6 @@ MonoBehaviour:
   itemId: wood
   displayName: "\u6728\u306E\u677F"
   icon: {fileID: 0}
+  canSell: 1
+  value: 200
+  defaultKeepCount: 10

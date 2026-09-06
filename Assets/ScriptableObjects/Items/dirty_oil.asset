@@ -15,3 +15,6 @@ MonoBehaviour:
   itemId: dirty_oil
   displayName: "\u6C5A\u308C\u305F\u30AA\u30A4\u30EB"
   icon: {fileID: 0}
+  canSell: 1
+  value: 800
+  defaultKeepCount: 10
