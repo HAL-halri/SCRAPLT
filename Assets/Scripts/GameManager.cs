@@ -93,16 +93,41 @@ public class GameManager : MonoBehaviour
     }
 
     //データ増加
-    public void RefuelFull()
+    public (bool success, long affordableLiters) TryRefuel(long requestedLiters)
     {
-        RemainingFuelLiters = 180f;
+        if(requestedLiters <= 0)
+        {
+            return (false, 0);
+        }
+        long cost = GetRefuelCost(requestedLiters);
+
+         if (!SpendGold(cost))
+        {
+            return (false, GetMaxAffordableLiters());
+        }
+            RemainingFuelLiters = Mathf.Clamp(RemainingFuelLiters + requestedLiters, 0, 180);
+
+            return (true, requestedLiters);
     }
     
     public void AddGold(long amount)
     {
-            gold += amount;
-            //?:nullでなければ変更を知らせる
-            OnGoldChanged?.Invoke();
+        gold += amount;
+        //?:nullでなければ変更を知らせる
+        OnGoldChanged?.Invoke();
+    }
+
+    public bool SpendGold(long amount)
+    {   
+        if(Gold >= amount)
+        {
+            AddGold(-amount);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void AddItem(ItemData item, long amount)
@@ -200,6 +225,19 @@ public class GameManager : MonoBehaviour
     {
         int relativeLevel = Mathf.Clamp(bonusLevel - 20, 0, 10);
         return relativeLevel * 1f;
+    }
+
+    public long GetRefuelCost(long liters)
+    {
+        //L単価100G
+        return liters * 100;
+    }
+
+    public long GetMaxAffordableLiters()
+    {
+        long tankSpace = (long)(180 - RemainingFuelLiters);
+        long affordableByGold = Gold / 100;
+        return Math.Min(tankSpace, affordableByGold);
     }
 
     //Upgrade処理
@@ -302,6 +340,21 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("売却できませんでした（売却不可、未所持、またはキープ数超過）");
+        }
+    }
+
+    [ContextMenu("Test Refuel Full")]
+    public void TestRefuelFull()
+    {
+        long requested = (long)Mathf.Ceil((180 - RemainingFuelLiters));
+        var (success, affordable) = TryRefuel(requested);
+        if (success)
+        {
+            Debug.Log($"補給成功：Fuel {RemainingFuelLiters}/180L, Gold {Gold}");
+        }
+        else
+        {
+            Debug.Log($"Gold不足。{affordable}Lまでなら補給可能です");
         }
     }
 
