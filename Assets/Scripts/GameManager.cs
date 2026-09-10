@@ -240,6 +240,32 @@ public class GameManager : MonoBehaviour
         return Math.Min(tankSpace, affordableByGold);
     }
 
+    public bool HasItem(string itemId)
+    {
+        if (!itemCounts.ContainsKey(itemId))
+        {
+            return false;
+        }
+        return itemCounts[itemId] > 0;
+    }
+
+    public long GetItemCount(string itemId)
+    {
+        if (!itemCounts.ContainsKey(itemId))
+        {
+            return 0;
+        }
+        return itemCounts[itemId];
+    }
+
+    public long GetKeepCount(string itemId)
+    {
+        if (!reservedCounts.ContainsKey(itemId))
+        {
+            return 0;
+        }
+        return reservedCounts[itemId];
+    }
     //Upgrade処理
     public bool CanUpgrade(UpgradeType type)
     {
@@ -304,8 +330,8 @@ public class GameManager : MonoBehaviour
         {
             return false;
         }
-        //見つからなかったらkeepが自動的に0になる
-        reservedCounts.TryGetValue(item.ItemId, out long keep);
+        //キープ数取得
+        long keep = GetKeepCount(item.ItemId);
 
         long canSellCounts = Math.Max(0, itemCounts[item.ItemId] - keep);
         if(canSellCounts <= 0)
@@ -358,7 +384,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetKeppCounts(string itemId, long count)
+    public void SetKeepCounts(string itemId, long count)
     {
         reservedCounts[itemId] = Math.Max(0L, count);
     }
