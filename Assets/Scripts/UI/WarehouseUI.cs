@@ -1,12 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using System;
 
 public class WarehouseUI : MonoBehaviour
 {
+    [SerializeField] private GameObject warehousePanel; 
     [SerializeField] private List<ItemData> displayOrder;
     [SerializeField] private Transform listParent;
-    [SerializeFiled] private GameObject itemSlotPrefab;
+    [SerializeField] private GameObject itemSlotPrefab;
+
+    //public void ToggleWarehousePanel()
+    //{
+    //    warehousePanel.SetActive(!warehousePanel.activeSelf);
+    //    if (warehousePanel.activeSelf)
+    //    {
+    //        RefreshWarehouse();
+    //    }
+    //}
+
+    void OnEnable()
+    {
+        RefreshWarehouse();
+    }
 
     public void RefreshWarehouse()
     {
@@ -39,7 +56,10 @@ public class WarehouseUI : MonoBehaviour
         //形のコピーを作成
         GameObject slot = Instantiate(itemSlotPrefab, listParent);
         //テキストを探す(画像に差し替え必須)
-        TMP_Text text = slot.GetComponentInChildren<TMP_Text>();
-        text.text = $"{item.DisplayName}\n{count}";
+        TMP_Text name = slot.GetComponent<TMP_Text>();
+        TMP_Text countText = slot.transform.Find("CountText").GetComponent<TMP_Text>();
+
+        name.text = $"{item.DisplayName}";
+        countText.text = $"{count}";
     }
 }
