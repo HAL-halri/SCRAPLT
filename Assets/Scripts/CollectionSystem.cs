@@ -80,8 +80,8 @@ public class CollectionSystem : MonoBehaviour
                 {
                     totalCount *= 5;
                 }
-                GameManager.Instance.AddItem(drop.item, totalCount);
-                Debug.Log($"Drew: {drop.item} * {totalCount} (roll={roll:F1}, cumulative={cumulative})");
+                GameManager.Instance.AddItem(drop.item, totalCount*999);
+                Debug.Log($"Drew: {drop.item} * {totalCount*999} (roll={roll:F1}, cumulative={cumulative})");
                 return;
             }
         }

@@ -6,19 +6,10 @@ using System;
 
 public class WarehouseUI : MonoBehaviour
 {
-    [SerializeField] private GameObject warehousePanel; 
     [SerializeField] private List<ItemData> displayOrder;
     [SerializeField] private Transform listParent;
     [SerializeField] private GameObject itemSlotPrefab;
 
-    //public void ToggleWarehousePanel()
-    //{
-    //    warehousePanel.SetActive(!warehousePanel.activeSelf);
-    //    if (warehousePanel.activeSelf)
-    //    {
-    //        RefreshWarehouse();
-    //    }
-    //}
 
     void OnEnable()
     {
@@ -27,11 +18,33 @@ public class WarehouseUI : MonoBehaviour
 
     public void RefreshWarehouse()
     {
-        foreach(Transform child in listParent)
+        foreach (Transform child in listParent)
         {
-            Destroy(child.gameObject);
+            child.gameObject.SetActive(false);
+        }
+        StartCoroutine(RebuildSlots());
+    }
+
+    private IEnumerator RebuildSlots()
+    {
+        //1フレーム待機しトラッカーの計算時間を確保
+        yield return null;
+
+        //1つずつ削除
+        List<GameObject> toDestroy = new List<GameObject>();
+        foreach (Transform child in listParent)
+        {
+            toDestroy.Add(child.gameObject);
+        }
+        foreach (GameObject obj in toDestroy)
+        {
+            Destroy(obj);
         }
 
+        //1フレーム待機
+        yield return null;
+
+        //アイテムスロット更新
         foreach (var item in displayOrder)
         {
             if (!GameManager.Instance.HasItem(item.ItemId))
@@ -47,7 +60,6 @@ public class WarehouseUI : MonoBehaviour
                 long display = Math.Min(999, count - 999 * i);
                 CreateSlot(item, display);
             }
-
         }
     }
 
@@ -61,5 +73,11 @@ public class WarehouseUI : MonoBehaviour
 
         name.text = $"{item.DisplayName}";
         countText.text = $"{count}";
+    }
+
+    public void OnSellAllButoonClicked()
+    {
+        GameManager.Instance.SellALLItems(displayOrder);
+        RefreshWarehouse();
     }
 }

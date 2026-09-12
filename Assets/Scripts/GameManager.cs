@@ -266,6 +266,31 @@ public class GameManager : MonoBehaviour
         }
         return reservedCounts[itemId];
     }
+
+    public List<ItemData> GetAvailableItems()
+    {
+        //取得したものを保存しておく
+        HashSet<string> addedIds = new HashSet<string>();
+        //戻り値用　現ステージで入手可能なアイテム
+        List<ItemData> result = new List<ItemData>();
+        foreach (var stage in allStages)
+        {
+            if(stage.Stage > currentStage)
+            {
+                continue;
+            }
+            foreach (var drop in stage.DropRates)
+            {
+                //まだ追加されていなければ
+                //result操作よりも圧倒的に高効率
+                if (addedIds.Add(drop.item.ItemId))
+                {
+                    result.Add(drop.item);
+                }
+            }
+        }
+        return result;
+    }
     //Upgrade処理
     public bool CanUpgrade(UpgradeType type)
     {
