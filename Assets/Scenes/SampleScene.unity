@@ -1540,7 +1540,7 @@ MonoBehaviour:
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
-  m_ChildControlHeight: 0
+  m_ChildControlHeight: 1
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
@@ -3375,7 +3375,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 813456756}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1982156880}
+        m_TargetAssemblyTypeName: KeepSettingUI, Assembly-CSharp
+        m_MethodName: OnConfirmYesButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &813456756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3877,10 +3889,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1982156876}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1982156880}
+        m_TargetAssemblyTypeName: KeepSettingUI, Assembly-CSharp
+        m_MethodName: OnCloseButtonClicked
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6827,7 +6839,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1402048879}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1982156880}
+        m_TargetAssemblyTypeName: KeepSettingUI, Assembly-CSharp
+        m_MethodName: OnSaveButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1402048879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9384,6 +9408,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keepRowPrefab: {fileID: 4701678740473430778, guid: 894c7ea47d81cbc40a885c58a2fd61ff, type: 3}
+  keepSettingPanel: {fileID: 1982156876}
+  confirmPanel: {fileID: 342607903}
   rowsParent: {fileID: 381413279}
 --- !u!1 &1990505844
 GameObject:
@@ -10137,7 +10163,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2143507967}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1982156880}
+        m_TargetAssemblyTypeName: KeepSettingUI, Assembly-CSharp
+        m_MethodName: OnConfirmNoButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2143507967
 MonoBehaviour:
   m_ObjectHideFlags: 0
