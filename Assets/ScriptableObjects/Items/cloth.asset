@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: cloth
   displayName: "\u5E03"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 23d2feb99e2ad0047b95a72a3c1d975e, type: 3}
   canSell: 1
   value: 200
   defaultKeepCount: 10

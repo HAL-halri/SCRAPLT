@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: dirty_oil
   displayName: "\u6C5A\u308C\u305F\u30AA\u30A4\u30EB"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 8a5f3b7384cb3a0489d5ac1350fcc740, type: 3}
   canSell: 1
   value: 800
   defaultKeepCount: 10

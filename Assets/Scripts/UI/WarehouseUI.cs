@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System;
 
@@ -68,10 +69,10 @@ public class WarehouseUI : MonoBehaviour
         //形のコピーを作成
         GameObject slot = Instantiate(itemSlotPrefab, listParent);
         //テキストを探す(画像に差し替え必須)
-        TMP_Text name = slot.GetComponent<TMP_Text>();
+        Image icon = slot.GetComponent<Image>();
         TMP_Text countText = slot.transform.Find("CountText").GetComponent<TMP_Text>();
 
-        name.text = $"{item.DisplayName}";
+        icon.sprite = item.Icon;
         countText.text = $"{count}";
     }
 

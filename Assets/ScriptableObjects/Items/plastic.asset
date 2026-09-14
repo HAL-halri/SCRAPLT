@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: plastic
   displayName: "\u30D7\u30E9\u306E\u30AB\u30B1\u30E9"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 59f15172b2f9bfe4fbfae2398753233f, type: 3}
   canSell: 1
   value: 100
   defaultKeepCount: 10
