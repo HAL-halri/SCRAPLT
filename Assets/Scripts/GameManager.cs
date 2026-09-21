@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string shipName = "ÉSÅ[ÉSÅ[";
     [SerializeField] private bool notificationEnabled = true;
 
+
+    public int StorageLevel => storageLevel;
+    public int FuelLevel => fuelLevel;
     public int SpeedLevel => speedLevel;
     public int BonusLevel => bonusLevel;
 
@@ -291,6 +294,79 @@ public class GameManager : MonoBehaviour
         }
         return result;
     }
+
+    public float GetStorageMinutesAtLevel(int level)
+    {
+        level = Mathf.Clamp(level, 0, 30);
+        ShipStageData currentData = GetCurrentStageData();
+        int relativeLevel = level - (currentStage - 1) * 10;
+
+        if (relativeLevel >= 10)
+        {
+            ShipStageData nextData = allStages.Find(s => s.Stage == currentStage + 1);
+            if (nextData == null)
+            {
+                return currentData.Storage * 60f + 9 * 20f;
+            }
+            return nextData.Storage * 60f;
+        }
+        else
+        {
+            return currentData.Storage * 60f + relativeLevel * 20f;
+        }
+    }
+
+    public (int min, int max) GetBonusGoldRangeAtLevel(int level)
+    {
+        int clampedLevel = Mathf.Clamp(level, 0, 30);
+        float ratio = Mathf.Sqrt((float)clampedLevel / 30f);
+        int min = Mathf.RoundToInt(10f + 30f * ratio);
+        int max = Mathf.RoundToInt(20f + 80f * ratio);
+        return (min, max);
+    }
+
+    public float GetNormalBonusPercentAtLevel(int level)
+    {
+        int relativeLevel = Mathf.Clamp(level - 10, 0, 10);
+        return relativeLevel * 3f;
+    }
+
+    public float GetBigBonusPercentAtLevel(int level)
+    {
+        int relativeLevel = Mathf.Clamp(level - 20, 0, 10);
+        return relativeLevel * 1f;
+    }
+
+    public long GetUpgradeCost(UpgradeType type)
+    {
+        int currentLevel;
+        float ratio;
+
+        switch (type)
+        {
+            case UpgradeType.Storage:
+                currentLevel = storageLevel;
+                ratio = 0.8f;
+                break;
+            case UpgradeType.Fuel:
+                currentLevel = fuelLevel;
+                ratio = 1.0f;
+                break;
+            case UpgradeType.Speed:
+                currentLevel = speedLevel;
+                ratio = 1.2f;
+                break;
+            case UpgradeType.Bonus:
+                currentLevel = bonusLevel;
+                ratio = 1.3f;
+                break;
+            default:
+                return 0;
+        }
+
+        float cost = 1000f * ratio * Mathf.Pow(1.25f, currentLevel);
+        return (long)Mathf.Round(cost);
+    }
     //Upgradeèàóù
     public bool CanUpgrade(UpgradeType type)
     {
@@ -341,6 +417,40 @@ public class GameManager : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public bool TryUpgrade(UpgradeType type)
+    {
+        if (!CanUpgrade(type))
+        {
+            return false;
+        }
+        long cost = GetUpgradeCost(type);
+        if (!SpendGold(cost))
+        {
+            return false;
+        }
+
+        switch (type) {
+            case UpgradeType.Storage:
+                storageLevel++;
+                break;
+            case UpgradeType.Fuel:
+                fuelLevel++;
+                break;
+            case UpgradeType.Speed:
+                speedLevel++;
+                break;
+            case UpgradeType.Bonus:
+                bonusLevel++;
+                break;
+            default:
+                return false;
+        }
+
+
+        OnRankChanged?.Invoke();
+        return true;
     }
 
 
