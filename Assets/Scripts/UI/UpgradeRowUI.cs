@@ -109,7 +109,7 @@ public class UpgradeRowUI : MonoBehaviour
         bool hasEnoughGold = GameManager.Instance.Gold >= cost;
 
         titleText.text = GetTitleText();
-        levelText.text = $"Lv{currentLevel}/{maxLevel}";
+        levelText.text = $"{currentLevel}/{maxLevel}";
         compareText.text = GetCompareText();
         costText.text = $"{cost}G";
         costText.color = normalColor;

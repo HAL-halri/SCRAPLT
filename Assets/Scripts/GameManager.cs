@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     public int BonusLevel => bonusLevel;
 
     public int CurrentStage => currentStage;
+    public int TotalStages => allStages.Count;
     public long Gold => gold;
     public string ShipName => shipName;
     public bool NotificationEnabled => notificationEnabled;
@@ -411,6 +412,8 @@ public class GameManager : MonoBehaviour
         if(CanAdvanceStage())
         {
             currentStage += 1;
+            //画面更新・新イベント用意したほうがきれい
+            OnRankChanged?.Invoke();
             return true;
         }
         else
