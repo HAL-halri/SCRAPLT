@@ -6,48 +6,51 @@ using TMPro;
 
 public class PortUI : MonoBehaviour
 {
-    [SerializeField] private TMP_Text fuelText;
     [SerializeField] private TMP_Text amountText;
     [SerializeField] private Slider amountSlider;
     [SerializeField] private Button minusButton;
     [SerializeField] private Button plusButton;
     [SerializeField] private Button refuelSpecifiedButton;
+    [SerializeField] private Button confirmYesButton;
     [SerializeField] private GameObject refuelConfirmPanel;
     [SerializeField] private TMP_Text confirmText;
     [SerializeField] private long incrementAmount = 10;
 
     void Start()
     {
-        GameManager.Instance.OnFuelChanged += UpdateFuelText;
-        UpdateFuelText();
         //値が変わったら関数を呼び出す
         amountSlider.onValueChanged.AddListener(OnSliderValueChanged);
     }
 
-    void OnDestroy()
+    void OnEnable()
     {
-        GameManager.Instance.OnFuelChanged -= UpdateFuelText;
+        GameManager.Instance.OnFuelChanged += RefreshSliderMax;
+        RefreshSliderMax();
+        amountSlider.value = amountSlider.maxValue;
+        OnSliderValueChanged(amountSlider.value);
     }
 
-    void UpdateFuelText()
+    void OnDisable()
     {
-        fuelText.text = $"{Mathf.FloorToInt(GameManager.Instance.RemainingFuelLiters)}/180L";
+        GameManager.Instance.OnFuelChanged -= RefreshSliderMax;
     }
 
-    public void OnRefuelButtonClicked()
-    {
-        long requested = (long)Mathf.Ceil(180 - GameManager.Instance.RemainingFuelLiters);
-        var (success, affordable) = GameManager.Instance.TryRefuel(requested);
 
-        if (success)
-        {
-            Debug.Log($"補給成功：Fuel {GameManager.Instance.RemainingFuelLiters}/180L, Gold {GameManager.Instance.Gold}");
-        }
-        else
-        {
-            Debug.Log($"Gold不足。{affordable}Lまでなら補給可能です");
-        }
-    }
+
+    //public void OnRefuelButtonClicked()
+    //{
+    //    long requested = (long)Mathf.Ceil(180 - GameManager.Instance.RemainingFuelLiters);
+    //    var (success, affordable) = GameManager.Instance.TryRefuel(requested);
+
+    //    if (success)
+    //    {
+    //        Debug.Log($"補給成功：Fuel {GameManager.Instance.RemainingFuelLiters}/180L, Gold {GameManager.Instance.Gold}");
+    //    }
+    //    else
+    //    {
+    //        Debug.Log($"Gold不足。{affordable}Lまでなら補給可能です");
+    //    }
+    //}
 
     private void RefreshSliderMax()
     {
@@ -98,17 +101,31 @@ public class PortUI : MonoBehaviour
 
     private void ShowConfirmPanel(long affordableLiters)
     {
+        if (affordableLiters <= 0)
+        {
+            confirmText.text = "Goldが不足しています。";
+            confirmYesButton.interactable = false;
+        }
+        else
+        {
+            confirmText.text = $"Goldが不足しています。\n{affordableLiters}Lまで補給しますか？";
+            confirmYesButton.interactable = true;
+        }
 
+        refuelConfirmPanel.SetActive(true);
     }
 
     public void OnConfirmYesButtonClicked()
     {
-
+        long maxAffordable = GameManager.Instance.GetMaxAffordableLiters();
+        GameManager.Instance.TryRefuel(maxAffordable);
+        refuelConfirmPanel.SetActive(false);
+        RefreshSliderMax();
     }
 
     public void OnCloseButtonClicked()
     {
-
+        refuelConfirmPanel.SetActive(false);
     }
 }
 
