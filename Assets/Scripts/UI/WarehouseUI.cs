@@ -10,6 +10,7 @@ public class WarehouseUI : MonoBehaviour
     [SerializeField] private List<ItemData> displayOrder;
     [SerializeField] private Transform listParent;
     [SerializeField] private GameObject itemSlotPrefab;
+    [SerializeField] private ItemDetailUI itemDetailUI;
 
 
     void OnEnable()
@@ -74,6 +75,8 @@ public class WarehouseUI : MonoBehaviour
 
         icon.sprite = item.Icon;
         countText.text = $"{count}";
+        Button button = slot.GetComponent<Button>();
+        button.onClick.AddListener(() => itemDetailUI.ShowItem(item));
     }
 
     public void OnSellAllButoonClicked()

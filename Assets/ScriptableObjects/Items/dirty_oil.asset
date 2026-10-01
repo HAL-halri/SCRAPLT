@@ -18,3 +18,6 @@ MonoBehaviour:
   canSell: 1
   value: 800
   defaultKeepCount: 10
+  description: "\u6E96\u5099\u4E2D"
+  obtainMethod: "\u6E96\u5099\u4E2D"
+  useDescription: "\u6E96\u5099\u4E2D"

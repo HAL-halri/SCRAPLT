@@ -14,6 +14,10 @@ public class ItemData : ScriptableObject
     [SerializeField] private bool canSell = true;
     [SerializeField] private long value;
     [SerializeField] private long defaultKeepCount = 10;
+    [TextArea, SerializeField] private string description;
+    [TextArea, SerializeField] private string obtainMethod;
+    [TextArea, SerializeField] private string useDescription;
+
 
     //参照だけできるItemIdを用意し、itemIdの中身を引き継ぐ
     public string ItemId => itemId;
@@ -22,4 +26,7 @@ public class ItemData : ScriptableObject
     public bool CanSell => canSell;
     public long Value => value;
     public long DefaultKeepCount => defaultKeepCount;
+    public string Description => description;
+    public string ObtainMethod => obtainMethod;
+    public string UseDescription => useDescription;
 }

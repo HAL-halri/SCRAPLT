@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: scrap
   displayName: "\u30B9\u30AF\u30E9\u30C3\u30D7"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 82e2314e74fd9cb4cbce57afcfa502f7, type: 3}
   canSell: 1
   value: 500
   defaultKeepCount: 10
+  description: "\u6E96\u5099\u4E2D"
+  obtainMethod: "\u6E96\u5099\u4E2D"
+  useDescription: "\u6E96\u5099\u4E2D"
