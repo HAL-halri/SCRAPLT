@@ -23,6 +23,11 @@ public class CollectionSystem : MonoBehaviour
             return;
         }
 
+        if (!GameManager.Instance.IsSailing)
+        {
+            return;
+        }
+
         GameManager.Instance.ConsumeFuel(Time.deltaTime / 3600f);
 
         if (GameManager.Instance.RemainingFuelLiters <= 0f)

@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Dictionary<string, long> reservedCounts = new Dictionary<string, long>();
     [SerializeField] private string shipName = "ƒS[ƒS[";
     [SerializeField] private bool notificationEnabled = true;
+    [SerializeField] private bool isSailing = false;
 
 
     public int StorageLevel => storageLevel;
@@ -54,6 +55,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public bool IsSailing => isSailing;
+
+
+    public event Action OnFuelChanged;
+    public event Action OnSailingChanged;
+
     public void Awake()
     {
         //Šù‚É‘¶İ‚µ‚Ä‚¢‚éê‡A©g‚ğ”j‰ó
@@ -74,8 +81,6 @@ public class GameManager : MonoBehaviour
     }
 
  
-
-    public event Action OnFuelChanged;
 
     public void ConsumeFuel(float hours)
     {
@@ -537,6 +542,12 @@ public class GameManager : MonoBehaviour
     {
         notificationEnabled = value;
     } 
+
+    public void ToggleSailing()
+    {
+        isSailing = !isSailing;
+        OnSailingChanged?.Invoke();
+    }
 
     public void ResetData()
     {
