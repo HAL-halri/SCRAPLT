@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float remainingFuelLiters = 180f;
     [SerializeField] private long gold = 0;
     [SerializeField] Dictionary<string, long> itemCounts = new Dictionary<string, long>();
-    [SerializeField] Dictionary<string, long> reservedCounts = new Dictionary<string, long>();
+    [SerializeField] Dictionary<string, long> keepCounts = new Dictionary<string, long>();
     [SerializeField] private string shipName = "ゴーゴー";
     [SerializeField] private bool notificationEnabled = true;
     [SerializeField] private bool isSailing = false;
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
     public long Gold => gold;
     public string ShipName => shipName;
     public bool NotificationEnabled => notificationEnabled;
-    public int Rank => storageLevel + fuelLevel + speedLevel+ bonusLevel;
+    public int Rank => storageLevel + fuelLevel + speedLevel + bonusLevel;
 
     public float RemainingFuelLiters
     {
@@ -69,9 +69,19 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        if (SaveSystem.HasSave())
+        {
+            SaveData data = SaveSystem.Load();
+            LoadFromSaveData(data);
+        }
         //
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    void Start()
+    {
+        StartCoroutine(AutoSaveLoop());
     }
 
     public ShipStageData GetCurrentStageData()
@@ -80,7 +90,7 @@ public class GameManager : MonoBehaviour
         return allStages.Find(s => s.Stage == currentStage);
     }
 
- 
+
 
     public void ConsumeFuel(float hours)
     {
@@ -98,27 +108,27 @@ public class GameManager : MonoBehaviour
     public float GetFuelDurationHoursAtLevel(int level)
     {
         int clamped = Mathf.Clamp(level, 0, 30);
-            return 4f + 14f * clamped / 30f;
+        return 4f + 14f * clamped / 30f;
     }
 
     //データ増加
     public (bool success, long affordableLiters) TryRefuel(long requestedLiters)
     {
-        if(requestedLiters <= 0)
+        if (requestedLiters <= 0)
         {
             return (false, 0);
         }
         long cost = GetRefuelCost(requestedLiters);
 
-         if (!SpendGold(cost))
+        if (!SpendGold(cost))
         {
             return (false, GetMaxAffordableLiters());
         }
-            RemainingFuelLiters = Mathf.Clamp(RemainingFuelLiters + requestedLiters, 0, 180);
+        RemainingFuelLiters = Mathf.Clamp(RemainingFuelLiters + requestedLiters, 0, 180);
 
-            return (true, requestedLiters);
+        return (true, requestedLiters);
     }
-    
+
     public void AddGold(long amount)
     {
         gold += amount;
@@ -127,8 +137,8 @@ public class GameManager : MonoBehaviour
     }
 
     public bool SpendGold(long amount)
-    {   
-        if(Gold >= amount)
+    {
+        if (Gold >= amount)
         {
             AddGold(-amount);
             return true;
@@ -145,9 +155,9 @@ public class GameManager : MonoBehaviour
         {
             itemCounts[item.ItemId] = 0;
         }
-        if (!reservedCounts.ContainsKey(item.ItemId))
+        if (!keepCounts.ContainsKey(item.ItemId))
         {
-            reservedCounts[item.ItemId] = item.DefaultKeepCount;
+            keepCounts[item.ItemId] = item.DefaultKeepCount;
         }
         itemCounts[item.ItemId] += amount;
     }
@@ -156,7 +166,7 @@ public class GameManager : MonoBehaviour
     public float GetCurrentStorageMinutes()
     {
         ShipStageData currentData = GetCurrentStageData();
-        
+
         //Stage内レべルを取得(相対レベル) 1レベルごとに20分ずつ増加
         int relativeLevel = storageLevel - (currentStage - 1) * 10;
 
@@ -269,11 +279,11 @@ public class GameManager : MonoBehaviour
 
     public long GetKeepCount(string itemId)
     {
-        if (!reservedCounts.ContainsKey(itemId))
+        if (!keepCounts.ContainsKey(itemId))
         {
             return 0;
         }
-        return reservedCounts[itemId];
+        return keepCounts[itemId];
     }
 
     public List<ItemData> GetAvailableItems()
@@ -284,7 +294,7 @@ public class GameManager : MonoBehaviour
         List<ItemData> result = new List<ItemData>();
         foreach (var stage in allStages)
         {
-            if(stage.Stage > currentStage)
+            if (stage.Stage > currentStage)
             {
                 continue;
             }
@@ -414,7 +424,7 @@ public class GameManager : MonoBehaviour
 
     public bool AdvanceStage()
     {
-        if(CanAdvanceStage())
+        if (CanAdvanceStage())
         {
             currentStage += 1;
             //画面更新・新イベント用意したほうがきれい
@@ -477,7 +487,7 @@ public class GameManager : MonoBehaviour
         long keep = GetKeepCount(item.ItemId);
 
         long canSellCounts = Math.Max(0, itemCounts[item.ItemId] - keep);
-        if(canSellCounts <= 0)
+        if (canSellCounts <= 0)
         {
             return false;
         }
@@ -489,7 +499,7 @@ public class GameManager : MonoBehaviour
 
     public void SellALLItems(List<ItemData> allItems)
     {
-        foreach(ItemData item in allItems)
+        foreach (ItemData item in allItems)
         {
             SellItem(item);
         }
@@ -529,7 +539,7 @@ public class GameManager : MonoBehaviour
 
     public void SetKeepCounts(string itemId, long count)
     {
-        reservedCounts[itemId] = Math.Max(0L, count);
+        keepCounts[itemId] = Math.Max(0L, count);
     }
 
     public void SetShipName(string newName)
@@ -541,12 +551,98 @@ public class GameManager : MonoBehaviour
     public void SetNotificationEnabled(bool value)
     {
         notificationEnabled = value;
-    } 
+    }
 
     public void ToggleSailing()
     {
         isSailing = !isSailing;
         OnSailingChanged?.Invoke();
+    }
+
+    public SaveData GetSaveData()
+    {
+        SaveData data = new SaveData();
+        data.gold = gold;
+        data.storageLevel = storageLevel;
+        data.fuelLevel = fuelLevel;
+        data.speedLevel = speedLevel;
+        data.bonusLevel = bonusLevel;
+        data.currentStage = currentStage;
+        data.remainingFuelLiters = remainingFuelLiters;
+        data.isSailing = isSailing;
+
+        data.itemCounts = new List<SaveData.ItemEntry>();
+        foreach (var kvp in itemCounts)
+        {
+            SaveData.ItemEntry entry = new SaveData.ItemEntry();
+            entry.key = kvp.Key;
+            entry.value = kvp.Value;
+            data.itemCounts.Add(entry);
+        }
+
+        data.keepCounts = new List<SaveData.ItemEntry>();
+        foreach (var kvp in keepCounts)
+        {
+            SaveData.ItemEntry entry = new SaveData.ItemEntry();
+            entry.key = kvp.Key;
+            entry.value = kvp.Value;
+            data.keepCounts.Add(entry);
+        }
+
+        data.lastSaveTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        return data;
+    }
+
+    public void LoadFromSaveData(SaveData data)
+    {
+        gold = data.gold;
+        storageLevel = data.storageLevel;
+        fuelLevel = data.fuelLevel;
+        speedLevel = data.speedLevel;
+        bonusLevel = data.bonusLevel;
+        currentStage = data.currentStage;
+        remainingFuelLiters = data.remainingFuelLiters;
+        isSailing = data.isSailing;
+
+        itemCounts.Clear();
+        foreach (var entry in data.itemCounts)
+        {
+            itemCounts[entry.key] = entry.value;
+        }
+
+        keepCounts.Clear();
+        foreach (var entry in data.keepCounts)
+        {
+            keepCounts[entry.key] = entry.value;
+        }
+
+        OnGoldChanged?.Invoke();
+        OnRankChanged?.Invoke();
+        OnFuelChanged?.Invoke();
+        OnSailingChanged?.Invoke();
+    }
+
+    private IEnumerator AutoSaveLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(30f);
+            SaveSystem.Save(this);
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveSystem.Save(this);
+    }
+
+    private void OnApplicationPaused(bool pause)
+    {
+        if (true)
+        {
+            SaveSystem.Save(this);
+        }
     }
 
     public void ResetData()

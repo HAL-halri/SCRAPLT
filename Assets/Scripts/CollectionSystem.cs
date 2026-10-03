@@ -10,6 +10,7 @@ public class CollectionSystem : MonoBehaviour
 
     private float elapsedSinceLastDraw = 0f;
     private float elapsedStorageTime = 0f;
+    public float ElapsedStorageTime => elapsedStorageTime;
 
 
     private void Update()
