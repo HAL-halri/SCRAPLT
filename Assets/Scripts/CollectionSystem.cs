@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CollectionSystem : MonoBehaviour
 {
-    [SerializeField] private float intervalSeconds = 30f;　//デバッグ用　最終的には60f
+    [SerializeField] private float intervalSeconds = 60f;　//デバッグ用　最終的には60f
     [SerializeField] private float speedMultiplier = 1f; //時間加速倍率
 
 
@@ -87,7 +87,7 @@ public class CollectionSystem : MonoBehaviour
                     totalCount *= 5;
                 }
                 GameManager.Instance.AddItem(drop.item, totalCount*999);
-                Debug.Log($"Drew: {drop.item} * {totalCount*999} (roll={roll:F1}, cumulative={cumulative})");
+                Debug.Log($"Drew: {drop.item} * {totalCount} (roll={roll:F1}, cumulative={cumulative})");
                 return;
             }
         }

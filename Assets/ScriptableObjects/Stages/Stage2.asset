@@ -14,20 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stage: 2
   storage: 12
-  fuelDuration: 54
   unlockedFeatures:
   - craft
   - fish
   dropRates:
   - stage: 2
     item: {fileID: 11400000, guid: a72d34bf996abc349a84f84d08ffecac, type: 2}
-    probability: 30
+    probability: 25
   - stage: 2
     item: {fileID: 11400000, guid: e65c367e806c9bf41b337e0da171c73c, type: 2}
-    probability: 30
+    probability: 25
   - stage: 2
     item: {fileID: 11400000, guid: 400b07241f4f4d44ba04f17c5467fef0, type: 2}
-    probability: 10
+    probability: 15
   - stage: 2
     item: {fileID: 11400000, guid: ae03eeb6e74f2f34d9351ead4297d5a9, type: 2}
     probability: 5
@@ -36,4 +35,7 @@ MonoBehaviour:
     probability: 10
   - stage: 2
     item: {fileID: 11400000, guid: 9e4f36836f8972141bcb1c10474589e2, type: 2}
-    probability: 15
+    probability: 12
+  - stage: 2
+    item: {fileID: 11400000, guid: 3a9c2f04b124f2e48a9e5ee5f5f61245, type: 2}
+    probability: 8

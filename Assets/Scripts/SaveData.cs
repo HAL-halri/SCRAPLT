@@ -16,6 +16,9 @@ public class SaveData
     public bool isSailing;
     public List<ItemEntry> itemCounts;
     public List<ItemEntry> keepCounts;
+    public List<ItemEntry> purchasedCounts;
+    public List<ItemEntry> purchaseWindowStarts;
+
     public long lastSaveTime;
 
     [System.Serializable]

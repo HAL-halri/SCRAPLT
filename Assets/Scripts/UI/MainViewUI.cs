@@ -45,13 +45,13 @@ public class MainViewUI : MonoBehaviour
         {
             backgroundImage.sprite = sailingSprite;
             statusText.text = "qŠC’†";
-            buttonText.text = "`‚É‹A‚é";
+            buttonText.text = "‹A`";
         }
         else
         {
             backgroundImage.sprite = portSprite;
             statusText.text = "’â”‘’†";
-            buttonText.text = "qŠC‚Éo‚é";
+            buttonText.text = "oq";
         }
     }
 

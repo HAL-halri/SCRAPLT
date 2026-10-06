@@ -16,6 +16,10 @@ public class UpgradeRowUI : MonoBehaviour
     [SerializeField] private Color normalColor = Color.black;
     [SerializeField] private Color warningColor = Color.red;
 
+    [SerializeField] private GameObject materialSection;
+    [SerializeField] private Image materialIcon;
+    [SerializeField] private TMP_Text materialAmountText;
+
 
     void OnEnable()
     {
@@ -113,24 +117,51 @@ public class UpgradeRowUI : MonoBehaviour
         compareText.text = GetCompareText();
         costText.text = $"{cost}G";
         costText.color = normalColor;
+        materialAmountText.color = normalColor;
         if (!hasEnoughGold)
         {
             costText.color = warningColor;
         }
+        bool isMaxLevel = currentLevel >= maxLevel;
 
-        if (!canUpgrade)
+        if (isMaxLevel)
         {
             upgradeButton.interactable = false;
             buttonText.text = "ステージ進行後解放";
         }
         else
         {
-
-            upgradeButton.interactable = hasEnoughGold;
+            upgradeButton.interactable = canUpgrade && hasEnoughGold;
             buttonText.text = "強化";
         }
-    }
 
+        var (materialId, materialAmount) = GameManager.Instance.GetUpgradeMaterials(upgradetype);
+        if (materialAmount <= 0)
+        {
+            materialSection.SetActive(false);
+        }
+        else
+        {
+            materialSection.SetActive(true);
+            ItemData itemData = GameManager.Instance.GetItemData(materialId);
+            if (itemData != null)
+            {
+                materialIcon.sprite = itemData.Icon;
+            }
+
+
+            long materialOwned = GameManager.Instance.GetItemCount(materialId);
+            bool hasEnoughMaterial = materialOwned >= materialAmount;
+
+            Debug.Log($"[{upgradetype}] materialId={materialId}, materialOwned={materialOwned}, materialAmount={materialAmount}, hasEnoughMaterial={hasEnoughMaterial}");
+
+            materialAmountText.text = $"{materialAmount}";
+            if (!hasEnoughMaterial)
+            {
+                materialAmountText.color = warningColor;
+            }
+        }
+    }
     public void OnUpgradeButtonClicked()
     {
         bool success = GameManager.Instance.TryUpgrade(upgradetype);

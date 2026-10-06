@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stage: 3
   storage: 16
-  fuelDuration: 60
   unlockedFeatures:
   - craft
   - fish
@@ -37,10 +36,7 @@ MonoBehaviour:
     probability: 10
   - stage: 3
     item: {fileID: 11400000, guid: 9e4f36836f8972141bcb1c10474589e2, type: 2}
-    probability: 10
+    probability: 12
   - stage: 3
     item: {fileID: 11400000, guid: 3a9c2f04b124f2e48a9e5ee5f5f61245, type: 2}
-    probability: 10
-  - stage: 3
-    item: {fileID: 11400000, guid: 7827d57ba469e7b4297eb90344c1a736, type: 2}
-    probability: 5
+    probability: 13

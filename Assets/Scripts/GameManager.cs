@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string shipName = "ゴーゴー";
     [SerializeField] private bool notificationEnabled = true;
     [SerializeField] private bool isSailing = false;
+    [SerializeField] private List<ItemData> allItems;
 
 
     public int StorageLevel => storageLevel;
@@ -44,6 +45,13 @@ public class GameManager : MonoBehaviour
     public string ShipName => shipName;
     public bool NotificationEnabled => notificationEnabled;
     public int Rank => storageLevel + fuelLevel + speedLevel + bonusLevel;
+
+    private Dictionary<string, long> purchasedCounts = new Dictionary<string, long>();
+    private Dictionary<string, long> purchaseWindowStarts = new Dictionary<string, long>();
+
+    private const int DAILY_PURCHASE_LIMIT = 30;
+    private const int PURCHASE_RESET_SECONDS = 86400;
+    private const double PURCHASE_PRICE_RATE = 1.5;
 
     public float RemainingFuelLiters
     {
@@ -109,6 +117,60 @@ public class GameManager : MonoBehaviour
     {
         int clamped = Mathf.Clamp(level, 0, 30);
         return 4f + 14f * clamped / 30f;
+    }
+
+    public (string itemId, long amount) GetUpgradeMaterials(UpgradeType type)
+    {
+        int currentLevel;
+        string materialId;
+        int baseAmount;
+
+        switch (type)
+        {
+            case UpgradeType.Storage:
+                currentLevel = storageLevel;
+                materialId = "wood";
+                baseAmount = 3;
+                break;
+            case UpgradeType.Fuel:
+                currentLevel = fuelLevel;
+                materialId = "dirty_oil";
+                baseAmount = 2;
+                break;
+            case UpgradeType.Speed:
+                currentLevel = speedLevel;
+                materialId = "scrap";
+                baseAmount = 3;
+                break;
+            case UpgradeType.Bonus:
+                currentLevel = bonusLevel;
+                materialId = "cloth";
+                baseAmount = 3;
+                break;
+            default:
+                return ("", 0);
+        }
+
+        if (currentLevel < 10)
+        {
+            return ("", 0);
+        }
+
+        //Lv11以上は素材計算
+        long amount = (long)Mathf.CeilToInt(baseAmount * Mathf.Pow(1.076f, currentLevel - 10));
+        return (materialId, amount);
+    }
+
+    public ItemData GetItemData(string itemId)
+    {
+        foreach (var item in allItems)
+        {
+            if (item.ItemId == itemId)
+            {
+                return item;
+            }
+        }
+        return null;
     }
 
     //データ増加
@@ -380,7 +442,7 @@ public class GameManager : MonoBehaviour
                 return 0;
         }
 
-        float cost = 1000f * ratio * Mathf.Pow(1.25f, currentLevel);
+        float cost = 500f * ratio * Mathf.Pow(1.25f, currentLevel);
         return (long)Mathf.Round(cost);
     }
     //Upgrade処理
@@ -406,7 +468,23 @@ public class GameManager : MonoBehaviour
                 return false;
         }
 
-        return currentLevel < currentStage * 10;
+        if (currentLevel >= currentStage * 10)
+        {
+            return false;
+        }
+
+        //素材チェック
+        var (materialId, materialAmount) = GetUpgradeMaterials(type);
+        if (materialAmount > 0)
+        {
+            long owned = GetItemCount(materialId);
+            if (owned < materialAmount)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public bool CanAdvanceStage()
@@ -447,6 +525,11 @@ public class GameManager : MonoBehaviour
         if (!SpendGold(cost))
         {
             return false;
+        }
+        var (materialId, materialAmount) = GetUpgradeMaterials(type);
+        if (materialAmount > 0)
+        {
+            itemCounts[materialId] -= materialAmount;
         }
 
         switch (type) {
@@ -505,36 +588,62 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //test
-    [SerializeField] private ItemData testItem;
+    ////test
+    //[SerializeField] private ItemData testItem;
 
-    [ContextMenu("Test Sell")]
-    public void TestSell()
+    //[ContextMenu("Test Sell")]
+    //public void TestSell()
+    //{
+    //    bool success = SellItem(testItem);
+    //    if (success)
+    //    {
+    //        Debug.Log($"売却成功：現在Gold {Gold}");
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("売却できませんでした（売却不可、未所持、またはキープ数超過）");
+    //    }
+    //}
+
+    //[ContextMenu("Test Refuel Full")]
+    //public void TestRefuelFull()
+    //{
+    //    long requested = (long)Mathf.Ceil((180 - RemainingFuelLiters));
+    //    var (success, affordable) = TryRefuel(requested);
+    //    if (success)
+    //    {
+    //        Debug.Log($"補給成功：Fuel {RemainingFuelLiters}/180L, Gold {Gold}");
+    //    }
+    //    else
+    //    {
+    //        Debug.Log($"Gold不足。{affordable}Lまでなら補給可能です");
+    //    }
+    //}
+    //==== 購入テスト用（提出前に削除）====
+    [ContextMenu("Test Add Gold 10000")]
+    public void TestAddGold()
     {
-        bool success = SellItem(testItem);
-        if (success)
-        {
-            Debug.Log($"売却成功：現在Gold {Gold}");
-        }
-        else
-        {
-            Debug.Log("売却できませんでした（売却不可、未所持、またはキープ数超過）");
-        }
+        AddGold(10000);
+        Debug.Log($"Gold追加：現在Gold {Gold}");
     }
 
-    [ContextMenu("Test Refuel Full")]
-    public void TestRefuelFull()
+    [ContextMenu("Test Purchase Wood x5")]
+    public void TestPurchaseWood()
     {
-        long requested = (long)Mathf.Ceil((180 - RemainingFuelLiters));
-        var (success, affordable) = TryRefuel(requested);
-        if (success)
+        long before = Gold;
+        bool success = TryPurchaseItem("wood", 5);
+        Debug.Log($"購入{(success ? "成功" : "失敗")}：Gold {before}→{Gold} / wood所持 {GetItemCount("wood")} / 残り購入可能 {GetRemainingPurchaseCount("wood")}");
+    }
+
+    [ContextMenu("Test Expire Wood Window")]
+    public void TestExpireWoodWindow()
+    {
+        //開始時刻を24時間前にずらして、リセットを擬似的に起こす
+        if (purchaseWindowStarts.ContainsKey("wood"))
         {
-            Debug.Log($"補給成功：Fuel {RemainingFuelLiters}/180L, Gold {Gold}");
+            purchaseWindowStarts["wood"] -= PURCHASE_RESET_SECONDS;
         }
-        else
-        {
-            Debug.Log($"Gold不足。{affordable}Lまでなら補給可能です");
-        }
+        Debug.Log($"wood残り購入可能 {GetRemainingPurchaseCount("wood")}");
     }
 
     public void SetKeepCounts(string itemId, long count)
@@ -559,6 +668,77 @@ public class GameManager : MonoBehaviour
         OnSailingChanged?.Invoke();
     }
 
+    private void RefreshPurchaseWindow(string itemId)
+    {
+        if (!purchaseWindowStarts.TryGetValue(itemId, out long start))
+        {
+            return;
+        }
+
+        long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        if (now - start >= PURCHASE_RESET_SECONDS)
+        {
+            purchasedCounts[itemId] = 0;
+            purchaseWindowStarts.Remove(itemId);
+        }
+    }
+
+    public long GetPurchasePrice(ItemData item)
+    {
+        double rawPrice = item.Value * PURCHASE_PRICE_RATE;
+        return (long)Math.Ceiling(rawPrice);
+    }
+
+    public long GetRemainingPurchaseCount(string itemId)
+    {
+        RefreshPurchaseWindow(itemId);
+        purchasedCounts.TryGetValue(itemId, out long purchased);
+
+        return Math.Max(0L, DAILY_PURCHASE_LIMIT - purchased);
+    }
+
+    public bool TryPurchaseItem(string itemId, long amount)
+    {
+        ItemData item = GetItemData(itemId);
+        long remaining = GetRemainingPurchaseCount(itemId);
+
+        //数量指定不足e
+        if (amount <= 0)
+        {
+            return false;
+        }
+        //アイテム参照不可e
+        if (item == null)
+        {
+            return false;
+        }
+        //指定数量超過e
+        if (amount > remaining)
+        {
+            return false;
+        }
+        //Gold不足e
+        long totalCost = GetPurchasePrice(item) * amount;
+        if (!SpendGold(totalCost))
+        {
+            return false;
+        }
+
+        AddItem(item, amount);
+        //リセット時間設定
+        if (!purchaseWindowStarts.ContainsKey(itemId))
+        {
+            purchaseWindowStarts[itemId] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        }
+
+        purchasedCounts.TryGetValue(itemId, out long purchased);
+        purchasedCounts[itemId] = purchased + amount;
+
+        return true;
+    }
+
+    //save
     public SaveData GetSaveData()
     {
         SaveData data = new SaveData();
@@ -572,7 +752,7 @@ public class GameManager : MonoBehaviour
         data.isSailing = isSailing;
 
         data.itemCounts = new List<SaveData.ItemEntry>();
-        foreach (var kvp in itemCounts)
+        foreach(var kvp in itemCounts)
         {
             SaveData.ItemEntry entry = new SaveData.ItemEntry();
             entry.key = kvp.Key;
@@ -581,12 +761,30 @@ public class GameManager : MonoBehaviour
         }
 
         data.keepCounts = new List<SaveData.ItemEntry>();
-        foreach (var kvp in keepCounts)
+        foreach(var kvp in keepCounts)
         {
             SaveData.ItemEntry entry = new SaveData.ItemEntry();
             entry.key = kvp.Key;
             entry.value = kvp.Value;
             data.keepCounts.Add(entry);
+        }
+
+        data.purchasedCounts = new List<SaveData.ItemEntry>();
+        foreach(var kvp in purchasedCounts)
+        {
+            SaveData.ItemEntry entry = new SaveData.ItemEntry();
+            entry.key = kvp.Key;
+            entry.value = kvp.Value;
+            data.purchasedCounts.Add(entry);
+        }
+
+        data.purchaseWindowStarts = new List<SaveData.ItemEntry>();
+        foreach (var kvp in purchaseWindowStarts)
+        {
+            SaveData.ItemEntry entry = new SaveData.ItemEntry();
+            entry.key = kvp.Key;
+            entry.value = kvp.Value;
+            data.purchaseWindowStarts.Add(entry);
         }
 
         data.lastSaveTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -617,6 +815,25 @@ public class GameManager : MonoBehaviour
             keepCounts[entry.key] = entry.value;
         }
 
+        purchasedCounts.Clear();
+        if (data.purchasedCounts != null)
+        {
+            foreach (var entry in data.purchasedCounts)
+            {
+                purchasedCounts[entry.key] = entry.value;
+            }
+        }
+        
+
+        purchaseWindowStarts.Clear();
+        if (data.purchaseWindowStarts != null)
+        {
+            foreach (var entry in data.purchaseWindowStarts)
+            {
+                purchaseWindowStarts[entry.key] = entry.value;
+            }
+        }
+
         OnGoldChanged?.Invoke();
         OnRankChanged?.Invoke();
         OnFuelChanged?.Invoke();
@@ -637,9 +854,17 @@ public class GameManager : MonoBehaviour
         SaveSystem.Save(this);
     }
 
-    private void OnApplicationPaused(bool pause)
+    private void OnApplicationPause(bool pauseStatus)
     {
-        if (true)
+        if (pauseStatus)
+        {
+            SaveSystem.Save(this);
+        }
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus)
         {
             SaveSystem.Save(this);
         }

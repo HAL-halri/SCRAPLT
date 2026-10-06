@@ -14,18 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stage: 1
   storage: 8
-  fuelDuration: 48
   unlockedFeatures: []
   dropRates:
   - stage: 1
     item: {fileID: 11400000, guid: a72d34bf996abc349a84f84d08ffecac, type: 2}
-    probability: 40
+    probability: 30
   - stage: 1
     item: {fileID: 11400000, guid: e65c367e806c9bf41b337e0da171c73c, type: 2}
-    probability: 40
+    probability: 30
   - stage: 1
     item: {fileID: 11400000, guid: 400b07241f4f4d44ba04f17c5467fef0, type: 2}
     probability: 15
   - stage: 1
     item: {fileID: 11400000, guid: ae03eeb6e74f2f34d9351ead4297d5a9, type: 2}
+    probability: 5
+  - stage: 1
+    item: {fileID: 11400000, guid: fdfd7f852d287d743a39da94a9c118b7, type: 2}
+    probability: 5
+  - stage: 1
+    item: {fileID: 11400000, guid: 9e4f36836f8972141bcb1c10474589e2, type: 2}
+    probability: 10
+  - stage: 1
+    item: {fileID: 11400000, guid: 3a9c2f04b124f2e48a9e5ee5f5f61245, type: 2}
     probability: 5
