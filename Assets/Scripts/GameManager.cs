@@ -48,9 +48,9 @@ public class GameManager : MonoBehaviour
 
     private Dictionary<string, long> purchasedCounts = new Dictionary<string, long>();
     private Dictionary<string, long> purchaseWindowStarts = new Dictionary<string, long>();
+    [SerializeField] private List<SaveData.PurchaseRecord> purchaseRecords = new List<SaveData.PurchaseRecord>();
 
     private const int DAILY_PURCHASE_LIMIT = 30;
-    private const int PURCHASE_RESET_SECONDS = 86400;
     private const double PURCHASE_PRICE_RATE = 1.5;
 
     public float RemainingFuelLiters
@@ -620,31 +620,31 @@ public class GameManager : MonoBehaviour
     //    }
     //}
     //==== 購入テスト用（提出前に削除）====
-    [ContextMenu("Test Add Gold 10000")]
-    public void TestAddGold()
-    {
-        AddGold(10000);
-        Debug.Log($"Gold追加：現在Gold {Gold}");
-    }
+    //[ContextMenu("Test Add Gold 10000")]
+    //public void TestAddGold()
+    //{
+    //    AddGold(10000);
+    //    Debug.Log($"Gold追加：現在Gold {Gold}");
+    //}
 
-    [ContextMenu("Test Purchase Wood x5")]
-    public void TestPurchaseWood()
-    {
-        long before = Gold;
-        bool success = TryPurchaseItem("wood", 5);
-        Debug.Log($"購入{(success ? "成功" : "失敗")}：Gold {before}→{Gold} / wood所持 {GetItemCount("wood")} / 残り購入可能 {GetRemainingPurchaseCount("wood")}");
-    }
+    //[ContextMenu("Test Purchase Wood x5")]
+    //public void TestPurchaseWood()
+    //{
+    //    long before = Gold;
+    //    bool success = TryPurchaseItem("wood", 5);
+    //    Debug.Log($"購入{(success ? "成功" : "失敗")}：Gold {before}→{Gold} / wood所持 {GetItemCount("wood")} / 残り購入可能 {GetRemainingPurchaseCount("wood")}");
+    //}
 
-    [ContextMenu("Test Expire Wood Window")]
-    public void TestExpireWoodWindow()
-    {
-        //開始時刻を24時間前にずらして、リセットを擬似的に起こす
-        if (purchaseWindowStarts.ContainsKey("wood"))
-        {
-            purchaseWindowStarts["wood"] -= PURCHASE_RESET_SECONDS;
-        }
-        Debug.Log($"wood残り購入可能 {GetRemainingPurchaseCount("wood")}");
-    }
+    //[ContextMenu("Test Expire Wood Window")]
+    //public void TestExpireWoodWindow()
+    //{
+    //    //開始時刻を24時間前にずらして、リセットを擬似的に起こす
+    //    if (purchaseWindowStarts.ContainsKey("wood"))
+    //    {
+    //        purchaseWindowStarts["wood"] -= PURCHASE_RESET_SECONDS;
+    //    }
+    //    Debug.Log($"wood残り購入可能 {GetRemainingPurchaseCount("wood")}");
+    //}
 
     public void SetKeepCounts(string itemId, long count)
     {
@@ -675,9 +675,10 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        DateTime startDate = DateTimeOffset.FromUnixTimeSeconds(start).LocalDateTime.Date;
+        DateTime currentDate = DateTime.Now.Date;
 
-        if (now - start >= PURCHASE_RESET_SECONDS)
+        if (currentDate > startDate)
         {
             purchasedCounts[itemId] = 0;
             purchaseWindowStarts.Remove(itemId);
@@ -880,6 +881,8 @@ public class GameManager : MonoBehaviour
         currentStage = 1;
         shipName = "ゴーゴー";
         itemCounts.Clear();
+        purchasedCounts.Clear();
+        purchaseWindowStarts.Clear();
 
         OnGoldChanged?.Invoke();
         OnShipNameChanged?.Invoke();

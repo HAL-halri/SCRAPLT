@@ -36,4 +36,8 @@ public class ItemDetailUI : MonoBehaviour
     {
         itemDetailPanel.SetActive(false);
     }
+    public void Hide()
+    {
+        itemDetailPanel.SetActive(false);
+    }
 }

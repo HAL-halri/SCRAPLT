@@ -27,4 +27,12 @@ public class SaveData
         public string key;
         public long value;
     }
+
+    [System.Serializable]
+    public class PurchaseRecord
+    {
+        public string itemId;
+        public long count;
+        public long lastRisetTime;
+    }
 }

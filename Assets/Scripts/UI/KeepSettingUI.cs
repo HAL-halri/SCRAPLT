@@ -14,6 +14,8 @@ public class KeepSettingUI : MonoBehaviour
 
     void OnEnable()
     {
+        confirmPanel.SetActive(false);
+
         foreach (Transform child in rowsParent)
         {
             Destroy(child.gameObject);

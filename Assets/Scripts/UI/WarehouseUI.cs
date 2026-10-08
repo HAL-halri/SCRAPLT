@@ -11,10 +11,13 @@ public class WarehouseUI : MonoBehaviour
     [SerializeField] private Transform listParent;
     [SerializeField] private GameObject itemSlotPrefab;
     [SerializeField] private ItemDetailUI itemDetailUI;
+    [SerializeField] private GameObject keepSettingPanel;
 
 
     void OnEnable()
     {
+        itemDetailUI.Hide();
+        keepSettingPanel.SetActive(false);
         RefreshWarehouse();
     }
 

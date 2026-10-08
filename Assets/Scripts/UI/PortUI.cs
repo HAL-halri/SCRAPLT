@@ -14,6 +14,7 @@ public class PortUI : MonoBehaviour
     [SerializeField] private Button confirmYesButton;
     [SerializeField] private GameObject refuelConfirmPanel;
     [SerializeField] private TMP_Text confirmText;
+    [SerializeField] private GameObject merchantPanel;
     [SerializeField] private long incrementAmount = 10;
 
     void Start()
@@ -28,6 +29,8 @@ public class PortUI : MonoBehaviour
         RefreshSliderMax();
         amountSlider.value = amountSlider.maxValue;
         OnSliderValueChanged(amountSlider.value);
+        merchantPanel.SetActive(false);
+        refuelConfirmPanel.SetActive(false);
     }
 
     void OnDisable()
