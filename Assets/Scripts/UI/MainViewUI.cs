@@ -15,6 +15,8 @@ public class MainViewUI : MonoBehaviour
     [SerializeField] private TMP_Text subStatusText;
     [SerializeField] private GameObject subStatusObject;
     [SerializeField] private CollectionSystem collectionSystem;
+    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private Button toggleSailingButton;
 
     void Start()
     {
@@ -57,7 +59,12 @@ public class MainViewUI : MonoBehaviour
 
     public void OnToggleSailingButtonClicked()
     {
-        GameManager.Instance.ToggleSailing();
+        toggleSailingButton.interactable = false;
+        FadeManager.Instance.StartFadeInOut(fadeDuration, () =>
+        {
+            GameManager.Instance.ToggleSailing();
+            toggleSailingButton.interactable = true;
+        });
     }
 
     private void UpdateSubStatus()

@@ -11,11 +11,32 @@ public class OptionUI : MonoBehaviour
     [SerializeField] private Button saveButton;
     [SerializeField] private GameObject resetConfirmPanel;
     [SerializeField] private GameObject optionPanel;
+    [SerializeField] private Slider volumeSlider;
+    [SerializeField] private TMP_Text volumeValueText;
 
     void OnEnable()
     {
-        nameInputField.text = GameManager.Instance.ShipName;
+        float currentVolume = BGMManager.Instance.GetMasterVolume();
+        volumeSlider.value = currentVolume;
+        UpdateVolumeText(currentVolume);
+        volumeSlider.onValueChanged.AddListener(OnVolumeSliderChanged);
+    }
 
+    void OnDisable()
+    {
+        volumeSlider.onValueChanged.RemoveListener(OnVolumeSliderChanged);
+    }
+
+    private void OnVolumeSliderChanged(float value)
+    {
+        BGMManager.Instance.SetMasterVolume(value);
+        UpdateVolumeText(value);
+    }
+
+    private void UpdateVolumeText(float value)
+    {
+        int percent = Mathf.RoundToInt(value * 100f);
+        volumeValueText.text = $"{percent}%";
     }
 
     void Start()

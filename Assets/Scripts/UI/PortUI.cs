@@ -7,6 +7,7 @@ using TMPro;
 public class PortUI : MonoBehaviour
 {
     [SerializeField] private TMP_Text amountText;
+    [SerializeField] private TMP_Text refuelCostText;
     [SerializeField] private Slider amountSlider;
     [SerializeField] private Button minusButton;
     [SerializeField] private Button plusButton;
@@ -40,20 +41,6 @@ public class PortUI : MonoBehaviour
 
 
 
-    //public void OnRefuelButtonClicked()
-    //{
-    //    long requested = (long)Mathf.Ceil(180 - GameManager.Instance.RemainingFuelLiters);
-    //    var (success, affordable) = GameManager.Instance.TryRefuel(requested);
-
-    //    if (success)
-    //    {
-    //        Debug.Log($"補給成功：Fuel {GameManager.Instance.RemainingFuelLiters}/180L, Gold {GameManager.Instance.Gold}");
-    //    }
-    //    else
-    //    {
-    //        Debug.Log($"Gold不足。{affordable}Lまでなら補給可能です");
-    //    }
-    //}
 
     private void RefreshSliderMax()
     {
@@ -68,6 +55,9 @@ public class PortUI : MonoBehaviour
     private void OnSliderValueChanged(float value)
     {
         amountText.text = $"{(int)value}L";
+
+        long cost = (long)value * 100;
+        refuelCostText.text = $"{cost}G";
     }
 
     public void OnPlusButtonClicked()

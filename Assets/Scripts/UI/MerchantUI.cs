@@ -33,7 +33,7 @@ public class MerchantUI : MonoBehaviour
         int hours = untilReset.Hours;
         int minutes = untilReset.Minutes;
 
-        resetTimeText.text = $"購入制限リセットまで:あと{untilReset:hh\\mm}";
+        resetTimeText.text = $"購入制限リセットまで:あと{untilReset:hh\\:mm}";
     }
 
     public void OnCloseButtonClicked()
