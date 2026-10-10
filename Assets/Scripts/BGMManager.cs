@@ -21,6 +21,9 @@ public class BGMManager : MonoBehaviour
     [SerializeField] private float fadeDuration = 1.5f;
     [SerializeField] private float defaultVolume = 0.5f;
 
+    [SerializeField] private AudioClip coinSE;
+    [SerializeField] private float coinSEVolume = 1.0f;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -140,4 +143,11 @@ public class BGMManager : MonoBehaviour
     {
         return PlayerPrefs.GetFloat("MasterVolume", 1f);
     }
+
+
+    public void PlayCoinSE()
+    {
+        oneShotSource.PlayOneShot(coinSE, coinSEVolume);
+    }
+
 }

@@ -3262,7 +3262,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -9325,6 +9325,7 @@ RectTransform:
   - {fileID: 169046861}
   - {fileID: 1951647227}
   - {fileID: 1089495047}
+  - {fileID: 2005681955}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -10120,6 +10121,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &884370716
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 884370717}
+  - component: {fileID: 884370718}
+  m_Layer: 0
+  m_Name: FlyingObjectSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &884370717
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884370716}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 517.4186, y: 1336.0479, z: -3.052672}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &884370718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884370716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea045fe6c94cfaf428c57917e7b5c5ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flyingObjectPrefab: {fileID: 3675173335529121618, guid: 214bbcf4cd1ef1543a39cdd5469fd390, type: 3}
+  spawnParent: {fileID: 2005681955}
 --- !u!1 &899034223
 GameObject:
   m_ObjectHideFlags: 0
@@ -25157,6 +25204,41 @@ RectTransform:
   m_AnchoredPosition: {x: 2.3263, y: 592.2268}
   m_SizeDelta: {x: 1000, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2005681954
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2005681955}
+  m_Layer: 5
+  m_Name: FlyingObjectContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2005681955
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2005681954}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 836311317}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0.000034332}
+  m_SizeDelta: {x: 1080, y: 1920}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2005875593
 GameObject:
   m_ObjectHideFlags: 0
@@ -26591,8 +26673,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 240.28, y: 75}
-  m_SizeDelta: {x: 554.8536, y: 85.8697}
+  m_AnchoredPosition: {x: 182.4, y: 75}
+  m_SizeDelta: {x: 670.62, y: 85.8697}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2079383175
 MonoBehaviour:
@@ -27038,6 +27120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   intervalSeconds: 15
+  coinSprite: {fileID: 21300000, guid: d630208f7d1e163478e2519c647ab545, type: 3}
+  coinSpawnCount: 8
 --- !u!4 &2114812843
 Transform:
   m_ObjectHideFlags: 0
@@ -27647,3 +27731,4 @@ SceneRoots:
   - {fileID: 171171651}
   - {fileID: 1634555772}
   - {fileID: 786419724}
+  - {fileID: 884370717}
