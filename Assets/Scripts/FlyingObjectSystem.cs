@@ -6,8 +6,9 @@ public class FlyingObjectSystem : MonoBehaviour
 
     [SerializeField] private GameObject flyingObjectPrefab;
     [SerializeField] private Transform spawnParent;
-    [SerializeField] private float spawnRadiusX = 300f;
+    [SerializeField] private float spawnRadiusX = 100f;
     [SerializeField] private float spawnRadiusY = 100f;
+
 
     void Awake()
     {
@@ -19,7 +20,7 @@ public class FlyingObjectSystem : MonoBehaviour
         Instance = this;
     }
 
-    public void SpawnFlyingObjects(Sprite sprite, Vector2 position, int count)
+    public void SpawnFlyingObjects(Sprite sprite, Vector2 position, int count, float scale = 1f)
     {
         for (int i = 0; i < count; i++)
         {
@@ -31,6 +32,7 @@ public class FlyingObjectSystem : MonoBehaviour
                 Random.Range(-spawnRadiusY, spawnRadiusY)
             );
             rect.anchoredPosition = position + offset;
+            rect.localScale = Vector3.one * scale;
 
             FlyingObject flying = obj.GetComponent<FlyingObject>();
             flying.Initialize(sprite);

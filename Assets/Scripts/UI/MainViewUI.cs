@@ -17,6 +17,7 @@ public class MainViewUI : MonoBehaviour
     [SerializeField] private CollectionSystem collectionSystem;
     [SerializeField] private float fadeDuration = 0.5f;
     [SerializeField] private Button toggleSailingButton;
+    [SerializeField] private ConfirmSailingUI confirmSailingUI;
 
     void Start()
     {
@@ -58,6 +59,18 @@ public class MainViewUI : MonoBehaviour
     }
 
     public void OnToggleSailingButtonClicked()
+    {
+        if (GameManager.Instance.IsSailing)
+        {
+            confirmSailingUI.ShowEndSailingDialog(() => ExecuteSailingToggle());
+        }
+        else
+        {
+            confirmSailingUI.ShowStartSailingDialog(() => ExecuteSailingToggle());
+        }
+    }
+
+    private void ExecuteSailingToggle()
     {
         toggleSailingButton.interactable = false;
         FadeManager.Instance.StartFadeInOut(fadeDuration, () =>

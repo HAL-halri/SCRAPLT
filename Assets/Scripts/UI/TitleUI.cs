@@ -12,7 +12,7 @@ public class TitleUI : MonoBehaviour
     [SerializeField] private float fadeDuration = 0.5f;
     [SerializeField] private Button fullScreenButton;
 
-    void OnEnable()
+    void Start()
     {
         StartCoroutine(BlinkTextLoop());
         BGMManager.Instance.PlayTitleBGM();

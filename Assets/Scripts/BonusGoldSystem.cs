@@ -41,7 +41,7 @@ public class BonusGoldSystem : MonoBehaviour
         // ÉRÉCÉìââèo
         if (coinSprite != null && FlyingObjectSystem.Instance != null)
         {
-            FlyingObjectSystem.Instance.SpawnFlyingObjects(coinSprite, Vector2.zero, coinSpawnCount);
+            FlyingObjectSystem.Instance.SpawnFlyingObjects(coinSprite, Vector2.zero, coinSpawnCount, 0.75f);
         }
     }
 }

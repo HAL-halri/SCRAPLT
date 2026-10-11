@@ -24,6 +24,9 @@ public class BGMManager : MonoBehaviour
     [SerializeField] private AudioClip coinSE;
     [SerializeField] private float coinSEVolume = 1.0f;
 
+    [SerializeField] private AudioClip itemSE;
+    [SerializeField] private float itemSEVolume = 1.0f;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -148,6 +151,11 @@ public class BGMManager : MonoBehaviour
     public void PlayCoinSE()
     {
         oneShotSource.PlayOneShot(coinSE, coinSEVolume);
+    }
+
+    public void PlayItemSE()
+    {
+        oneShotSource.PlayOneShot(itemSE, itemSEVolume);
     }
 
 }

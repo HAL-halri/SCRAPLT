@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CollectionSystem : MonoBehaviour
 {
-    [SerializeField] private float intervalSeconds = 60f;　//デバッグ用　最終的には60f
-    [SerializeField] private float speedMultiplier = 1f; //時間加速倍率
+    [SerializeField] private float intervalSeconds = 60f;
+    [SerializeField] private float speedMultiplier = 1f;
 
 
     private float elapsedSinceLastDraw = 0f;
@@ -86,7 +86,9 @@ public class CollectionSystem : MonoBehaviour
                 {
                     totalCount *= 5;
                 }
-                GameManager.Instance.AddItem(drop.item, totalCount*1);
+                GameManager.Instance.AddItem(drop.item, totalCount * 1);
+                FlyingObjectSystem.Instance.SpawnFlyingObjects(drop.item.Icon, Vector2.zero, totalCount, 2.0f);
+                BGMManager.Instance.PlayItemSE();
                 Debug.Log($"Drew: {drop.item} * {totalCount} (roll={roll:F1}, cumulative={cumulative})");
                 return;
             }
