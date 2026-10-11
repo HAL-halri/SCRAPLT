@@ -889,4 +889,12 @@ public class GameManager : MonoBehaviour
         OnRankChanged?.Invoke();
     }
 
+    [ContextMenu("Delete All PlayerPrefs")]
+    public void DeleteAllPlayerPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("PlayerPrefs‘SíœŠ®—¹");
+    }
+
 }
