@@ -442,7 +442,14 @@ public class GameManager : MonoBehaviour
                 return 0;
         }
 
-        float cost = 500f * ratio * Mathf.Pow(1.25f, currentLevel);
+        float baseCost = 500f;
+        if (currentLevel < 10)
+        {
+            baseCost = 50f;
+        }
+        
+        
+        float cost = baseCost * ratio * Mathf.Pow(1.25f, currentLevel);
         return (long)Mathf.Round(cost);
     }
     //Upgradeˆ—

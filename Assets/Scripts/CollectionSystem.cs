@@ -87,8 +87,12 @@ public class CollectionSystem : MonoBehaviour
                     totalCount *= 5;
                 }
                 GameManager.Instance.AddItem(drop.item, totalCount * 1);
-                FlyingObjectSystem.Instance.SpawnFlyingObjects(drop.item.Icon, Vector2.zero, totalCount, 2.0f);
-                BGMManager.Instance.PlayItemSE();
+                bool isExploring = SeabedExplorationSystem.Instance != null && SeabedExplorationSystem.Instance.IsExploring;
+                if (!isExploring)
+                {
+                    FlyingObjectSystem.Instance.SpawnFlyingObjects(drop.item.Icon, Vector2.zero, totalCount, 0.75f);
+                    BGMManager.Instance.PlayItemSE();
+                }
                 Debug.Log($"Drew: {drop.item} * {totalCount} (roll={roll:F1}, cumulative={cumulative})");
                 return;
             }

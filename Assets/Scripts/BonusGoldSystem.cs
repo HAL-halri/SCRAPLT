@@ -35,13 +35,17 @@ public class BonusGoldSystem : MonoBehaviour
         var (min, max) = GameManager.Instance.GetBonusGoldRange();
         int bonusGold = Random.Range(min, max + 1);
         GameManager.Instance.AddGold(bonusGold);
-        BGMManager.Instance.PlayCoinSE();
-        Debug.Log($"{bonusGold}Gí«â¡älìæ!");
 
-        // ÉRÉCÉìââèo
-        if (coinSprite != null && FlyingObjectSystem.Instance != null)
+        bool isExploring = SeabedExplorationSystem.Instance != null && SeabedExplorationSystem.Instance.IsExploring;
+        if (!isExploring)
         {
-            FlyingObjectSystem.Instance.SpawnFlyingObjects(coinSprite, Vector2.zero, coinSpawnCount, 0.75f);
+            if (coinSprite != null && FlyingObjectSystem.Instance != null)
+            {
+                FlyingObjectSystem.Instance.SpawnFlyingObjects(coinSprite, Vector2.zero, coinSpawnCount);
+            }
+            BGMManager.Instance.PlayCoinSE();
         }
+
+        Debug.Log($"{bonusGold}Gí«â¡älìæ!");
     }
 }

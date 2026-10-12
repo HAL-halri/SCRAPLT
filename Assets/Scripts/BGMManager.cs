@@ -11,12 +11,15 @@ public class BGMManager : MonoBehaviour
     [SerializeField] private AudioSource shipSESource;
     [SerializeField] private AudioSource creakSESource;
     [SerializeField] private AudioSource oneShotSource;
+    [SerializeField] private AudioSource explorationSESource;
 
     [SerializeField] private AudioClip titleBGM;
     [SerializeField] private AudioClip portLoop;
     [SerializeField] private AudioClip shipLoop;
     [SerializeField] private AudioClip creakSE;
     [SerializeField] private AudioClip sceneChangeSE;
+    [SerializeField] private AudioClip explorationBGM;
+
 
     [SerializeField] private float fadeDuration = 1.5f;
     [SerializeField] private float defaultVolume = 0.5f;
@@ -26,6 +29,8 @@ public class BGMManager : MonoBehaviour
 
     [SerializeField] private AudioClip itemSE;
     [SerializeField] private float itemSEVolume = 1.0f;
+
+    private AudioSource previousPlayingSource;
 
     void Awake()
     {
@@ -87,6 +92,29 @@ public class BGMManager : MonoBehaviour
         {
             StartLoopWithFade(portSESource, portLoop);
         }
+    }
+    //äCíÍíTçıéû
+    public void PlayExplorationBGM()
+    {
+        if (portSESource.isPlaying)
+        {
+            StartCoroutine(StopLoopWithFade(portSESource));
+        }
+        if (shipSESource.isPlaying)
+        {
+            StartCoroutine(StopLoopWithFade(shipSESource));
+        }
+        if (creakSESource.isPlaying)
+        {
+            StartCoroutine(StopLoopWithFade(creakSESource));
+        }
+        StartLoopWithFade(explorationSESource, explorationBGM);
+    }
+
+    public void StopExplorationBGM()
+    {
+        StartCoroutine(StopLoopWithFade(explorationSESource));
+        UpdateSailingSE();
     }
 
     //----- í‚îë/çqäCêÿë÷éûÅiOnSailingChangedÇ≈åƒÇŒÇÍÇÈÅj -----

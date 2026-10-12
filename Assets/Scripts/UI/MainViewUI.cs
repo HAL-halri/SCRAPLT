@@ -18,6 +18,7 @@ public class MainViewUI : MonoBehaviour
     [SerializeField] private float fadeDuration = 0.5f;
     [SerializeField] private Button toggleSailingButton;
     [SerializeField] private ConfirmSailingUI confirmSailingUI;
+    [SerializeField] private GameObject explorationButton;
 
     void Start()
     {
@@ -49,12 +50,14 @@ public class MainViewUI : MonoBehaviour
             backgroundImage.sprite = sailingSprite;
             statusText.text = "çqäCíÜ";
             buttonText.text = "ãAç`";
+            explorationButton.SetActive(true);
         }
         else
         {
             backgroundImage.sprite = portSprite;
             statusText.text = "í‚îëíÜ";
-            buttonText.text = "èoçq";
+            buttonText.text = "èoç`";
+            explorationButton.SetActive(false);
         }
     }
 
